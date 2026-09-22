@@ -30,7 +30,6 @@ import { useVoiceTyping } from '../hooks/useVoiceTyping';
 import { SearchResultItem, SearchMode, SearchResponse, SearchHistoryItem } from '../types';
 import { InstantReaderDrawer } from '../components/InstantReaderDrawer';
 import { TuningLens } from '../components/TuningLens';
-import { VoiceSearchModal } from '../components/VoiceSearchModal';
 import { CrawlerModal } from '../components/CrawlerModal';
 import { PeopleAlsoAsk } from '../components/PeopleAlsoAsk';
 import { SearchHistoryModal } from '../components/SearchHistoryModal';
@@ -75,7 +74,6 @@ export const GoogleSearchResultsPage: React.FC<GoogleSearchResultsPageProps> = (
   }, [queryParam]);
 
   // Modals
-  const [isVoiceOpen, setIsVoiceOpen] = useState(false);
   const [isCrawlerOpen, setIsCrawlerOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
@@ -1012,16 +1010,6 @@ export const GoogleSearchResultsPage: React.FC<GoogleSearchResultsPageProps> = (
         activeQuery={queryParam}
         currentIndex={currentIndex}
         totalResults={response?.results.length ?? 0}
-      />
-
-      {/* Voice Search Modal */}
-      <VoiceSearchModal
-        isOpen={isVoiceOpen}
-        onClose={() => setIsVoiceOpen(false)}
-        onTranscript={(spoken) => {
-          setInputQuery(spoken);
-          setSearchParams({ q: spoken });
-        }}
       />
 
       {/* Crawler & URL Ingestion Modal */}

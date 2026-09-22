@@ -20,7 +20,6 @@ import {
 import { api } from '../services/api';
 import { historyService } from '../services/historyService';
 import { useVoiceTyping } from '../hooks/useVoiceTyping';
-import { VoiceSearchModal } from '../components/VoiceSearchModal';
 import { CrawlerModal } from '../components/CrawlerModal';
 import { AuthModal } from '../components/AuthModal';
 import { SearchHistoryModal } from '../components/SearchHistoryModal';
@@ -49,7 +48,6 @@ export const GoogleSearchHomePage: React.FC<GoogleSearchHomePageProps> = ({
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   // Modals
-  const [isVoiceOpen, setIsVoiceOpen] = useState(false);
   const [isCrawlerOpen, setIsCrawlerOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -623,16 +621,6 @@ export const GoogleSearchHomePage: React.FC<GoogleSearchHomePageProps> = ({
           </div>
         </div>
       </footer>
-
-      {/* Voice Search Modal */}
-      <VoiceSearchModal
-        isOpen={isVoiceOpen}
-        onClose={() => setIsVoiceOpen(false)}
-        onTranscript={(spokenQuery) => {
-          setQuery(spokenQuery);
-          handleSearch(spokenQuery);
-        }}
-      />
 
       {/* Crawler / URL Ingestion Modal */}
       <CrawlerModal
