@@ -1,0 +1,1 @@
+# SmartSearch Scrapy Crawler Package
