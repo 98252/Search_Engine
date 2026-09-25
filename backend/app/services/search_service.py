@@ -9,6 +9,23 @@ from app.services.qdrant_service import qdrant_service
 from app.services.web_search_service import web_search_provider
 from app.core.logging import logger
 
+ENGLISH_STOPWORDS = {
+    "a", "about", "above", "after", "again", "against", "all", "am", "an", "and",
+    "any", "are", "aren't", "as", "at", "be", "because", "been", "before", "being",
+    "below", "between", "both", "but", "by", "can", "can't", "cannot", "could",
+    "did", "do", "does", "doing", "down", "during", "each", "few", "for", "from",
+    "further", "had", "has", "have", "having", "he", "her", "here", "hers",
+    "herself", "him", "himself", "his", "how", "i", "if", "in", "into", "is",
+    "it", "its", "itself", "let's", "me", "more", "most", "my", "myself", "no",
+    "nor", "not", "of", "off", "on", "once", "only", "or", "other", "ought",
+    "our", "ours", "ourselves", "out", "over", "own", "same", "she", "should",
+    "so", "some", "such", "than", "that", "the", "their", "theirs", "them",
+    "themselves", "then", "there", "these", "they", "this", "those", "through",
+    "to", "too", "under", "until", "up", "very", "was", "we", "were", "what",
+    "when", "where", "which", "while", "who", "whom", "why", "with", "would",
+    "you", "your", "yours", "yourself", "yourselves"
+}
+
 class SearchCoordinatorService:
     """
     Coordinates hybrid search between OpenSearch (lexical BM25) and Qdrant (dense vector),
@@ -89,23 +106,33 @@ class SearchCoordinatorService:
             w_vec=k2_weight
         )
 
-        query_words = [w for w in re.findall(r'\b\w+\b', query.lower()) if len(w) > 1]
+        raw_words = [w for w in re.findall(r'\b\w+\b', query.lower()) if len(w) > 1]
+        meaningful_words = [w for w in raw_words if w not in ENGLISH_STOPWORDS]
+        query_words = meaningful_words if meaningful_words else raw_words
+
         all_candidates: List[Dict[str, Any]] = []
 
-        # 1. Local items (only keep if BM25 matched or title/snippet matches query terms)
+        # 1. Local items (only keep if query words explicitly match in title/content)
         for item in local_ranked_items:
             title_lower = item.title.lower()
             snippet_lower = item.snippet.lower()
-            word_matches = sum(1 for w in query_words if w in title_lower or w in snippet_lower)
+            word_matches = sum(
+                1 for w in query_words
+                if re.search(r'\b' + re.escape(w) + r'\b', title_lower)
+                or re.search(r'\b' + re.escape(w) + r'\b', snippet_lower)
+            )
+
+            # Never allow unrelated local documents to hijack queries
+            if word_matches == 0:
+                continue
 
             if item.bm25_score and item.bm25_score > 0.05:
                 relevance = 6.0 + item.bm25_score + (word_matches * 3.0)
             elif word_matches > 0:
                 relevance = 4.0 + (word_matches * 2.5)
-            elif item.vector_score and item.vector_score > 0.65:
+            elif item.vector_score and item.vector_score > 0.75:
                 relevance = 2.0 + (item.vector_score * 2.0)
             else:
-                # Discard unrelated local items
                 continue
 
             all_candidates.append({"item": item, "relevance": relevance})
@@ -114,10 +141,14 @@ class SearchCoordinatorService:
         for w_idx, w_item in enumerate(web_results):
             title_lower = w_item["title"].lower()
             snippet_lower = w_item["snippet"].lower()
-            word_matches = sum(1 for w in query_words if w in title_lower or w in snippet_lower)
+            word_matches = sum(
+                1 for w in query_words
+                if re.search(r'\b' + re.escape(w) + r'\b', title_lower)
+                or re.search(r'\b' + re.escape(w) + r'\b', snippet_lower)
+            )
             exact_phrase = query.lower() in title_lower or query.lower() in snippet_lower
 
-            relevance = 5.0 + (6.0 if exact_phrase else 0.0) + (word_matches * 2.0) - (w_idx * 0.05)
+            relevance = 7.0 + (6.0 if exact_phrase else 0.0) + (word_matches * 2.5) - (w_idx * 0.05)
 
             clean_snippet = w_item["snippet"]
             for qw in query_words:

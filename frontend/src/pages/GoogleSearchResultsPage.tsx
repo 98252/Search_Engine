@@ -33,6 +33,7 @@ import { TuningLens } from '../components/TuningLens';
 import { VoiceSearchModal } from '../components/VoiceSearchModal';
 import { CrawlerModal } from '../components/CrawlerModal';
 import { PeopleAlsoAsk } from '../components/PeopleAlsoAsk';
+import { DirectAnswerCard } from '../components/DirectAnswerCard';
 import { SearchHistoryModal } from '../components/SearchHistoryModal';
 
 interface GoogleSearchResultsPageProps {
@@ -702,8 +703,15 @@ export const GoogleSearchResultsPage: React.FC<GoogleSearchResultsPageProps> = (
                 ))}
               </div>
             ) : response && response.results.length > 0 ? (
-              response.results.map((item, idx) => (
-                <React.Fragment key={item.id}>
+              <>
+                {/* Instant AI Overview & Direct Answer Box */}
+                <DirectAnswerCard
+                  query={queryParam}
+                  topResult={response.results[0]}
+                  onOpenReader={handleOpenPeek}
+                />
+                {response.results.map((item, idx) => (
+                  <React.Fragment key={item.id}>
                   <article
                     className="group rounded-2xl p-4 -mx-4 hover:bg-slate-100/80 dark:hover:bg-slate-900/50 transition duration-150 border border-transparent hover:border-slate-200 dark:hover:border-slate-800/80"
                   >
@@ -879,7 +887,8 @@ export const GoogleSearchResultsPage: React.FC<GoogleSearchResultsPageProps> = (
                     />
                   )}
                 </React.Fragment>
-              ))
+              ))}
+              </>
             ) : (
               <div className="py-12 text-center space-y-3">
                 <HelpCircle className="w-10 h-10 text-slate-400 dark:text-slate-500 mx-auto" />

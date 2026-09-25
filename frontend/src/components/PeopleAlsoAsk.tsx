@@ -20,10 +20,50 @@ export const PeopleAlsoAsk: React.FC<PeopleAlsoAskProps> = ({
   topResult,
   onOpenReader,
 }) => {
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(0); // First open by default
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null); // Collapsed by default like Google
 
   const generateQuestions = (q: string): QuestionAnswer[] => {
     const qLower = q.toLowerCase();
+
+    if (
+      qLower.includes('computer') ||
+      qLower.includes('pc') ||
+      qLower.includes('hardware') ||
+      qLower.includes('software') ||
+      qLower.includes('laptop') ||
+      qLower.includes('cpu')
+    ) {
+      return [
+        {
+          question: 'What is a computer in simple terms?',
+          answer:
+            'A computer is an electronic machine that accepts data as input, processes it using arithmetic and logical instructions (software), stores files and system states, and outputs useful results for users.',
+          sourceTitle: 'Computer - Wikipedia',
+          sourceUrl: 'https://en.wikipedia.org/wiki/Computer',
+        },
+        {
+          question: 'What are the 4 primary functions of a computer?',
+          answer:
+            'The four primary functions are: 1) Input (receiving commands via keyboard/mouse), 2) Processing (calculating instructions in the CPU), 3) Storage (saving data to RAM and SSD/HDD), and 4) Output (rendering displays or transmitting network signals).',
+          sourceTitle: 'Computer Architecture & Systems',
+          sourceUrl: 'https://en.wikipedia.org/wiki/Computer_architecture',
+        },
+        {
+          question: 'What are the essential components of a computer?',
+          answer:
+            'The primary components are the Central Processing Unit (CPU), Motherboard, Random Access Memory (RAM), Power Supply (PSU), storage drive (SSD or HDD), and input/output peripherals (monitor, keyboard, mouse).',
+          sourceTitle: 'Personal Computer Hardware Guide',
+          sourceUrl: 'https://en.wikipedia.org/wiki/Personal_computer_hardware',
+        },
+        {
+          question: 'What are the different types of computers?',
+          answer:
+            'Computers range from Microcomputers (desktops, laptops, tablets, smartphones) and Workstations, to Enterprise Cloud Servers, Mainframe transaction processors, and Supercomputers for scientific simulations and AI research.',
+          sourceTitle: 'Classification of Computers',
+          sourceUrl: 'https://en.wikipedia.org/wiki/Classes_of_computers',
+        },
+      ];
+    }
 
     if (qLower.includes('movie') || qLower.includes('film') || qLower.includes('cinema') || qLower.includes('show')) {
       return [
@@ -112,27 +152,31 @@ export const PeopleAlsoAsk: React.FC<PeopleAlsoAskProps> = ({
 
     // Dynamic fallback for any general query
     const cleanTopic = q.trim();
+    const cleanSnippet = topResult?.snippet
+      ? topResult.snippet.replace(/<[^>]+>/g, '').replace(/&quot;/g, '"').replace(/&amp;/g, '&')
+      : null;
+
     return [
       {
-        question: `What are the most important facts about ${cleanTopic}?`,
+        question: `What is the core definition and purpose of ${cleanTopic}?`,
         answer:
-          topResult?.snippet ||
-          `${cleanTopic} is indexed across live knowledge sources. Verified records from ${topResult?.domain || 'authoritative sources'} provide comprehensive overviews, historical context, and current developments.`,
-        sourceTitle: topResult?.title || `${cleanTopic} Overview`,
+          cleanSnippet ||
+          `${cleanTopic} is documented across verified knowledge bases, providing detailed historical background, technical definitions, and real-world usage.`,
+        sourceTitle: topResult?.title ? topResult.title.replace(/<[^>]+>/g, '') : `${cleanTopic} Overview`,
         sourceUrl: topResult?.url || `https://en.wikipedia.org/wiki/${encodeURIComponent(cleanTopic.replace(/ /g, '_'))}`,
       },
       {
-        question: `Where can I find authoritative information on ${cleanTopic}?`,
+        question: `Where can I find authoritative documentation on ${cleanTopic}?`,
         answer:
-          `Authoritative documentation and verified encyclopedic records are available via ${topResult?.domain || 'primary domain archives'} and public references with peer review.`,
+          `Authoritative records and encyclopedic articles on ${cleanTopic} are maintained by ${topResult?.domain || 'academic and educational organizations'} with verified editorial oversight.`,
         sourceTitle: topResult?.domain || 'Verified Knowledge Base',
         sourceUrl: topResult?.url || 'https://en.wikipedia.org',
       },
       {
-        question: `How is ${cleanTopic} categorized and evaluated?`,
+        question: `How is ${cleanTopic} structured and categorized?`,
         answer:
-          `Information retrieval algorithms rank ${cleanTopic} using hybrid semantic matching, lexical keyword density, and domain authority scoring to deliver top-relevance results.`,
-        sourceTitle: 'SmartSearch Multi-Source Index',
+          `In contemporary information science, ${cleanTopic} is categorized through structured taxonomy, functional characteristics, and contextual relationships within its subject domain.`,
+        sourceTitle: 'SmartSearch Knowledge Network',
         sourceUrl: topResult?.url || 'https://smartsearch.ai',
       },
     ];

@@ -1,13 +1,17 @@
 import axios from 'axios';
 import { SearchMode, SearchResponse, SearchResultItem, CrawlJob, CrawlStats, SystemTelemetry, User, ReaderArticleData } from '../types';
 
-const API_BASE = '/api/v1';
+const rawApiUrl = (import.meta as any).env?.VITE_API_URL;
+const API_BASE = rawApiUrl
+  ? `${rawApiUrl.replace(/\/$/, '')}/api/v1`
+  : '/api/v1';
 
 const apiClient = axios.create({
   baseURL: API_BASE,
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 10000,
 });
 
 // Attach JWT token if stored
@@ -120,6 +124,23 @@ const LOCAL_FALLBACK_CORPUS: SearchResultItem[] = [
   },
 ];
 
+const STOP_WORDS = new Set([
+  'a', 'about', 'above', 'after', 'again', 'against', 'all', 'am', 'an', 'and',
+  'any', 'are', 'aren\'t', 'as', 'at', 'be', 'because', 'been', 'before', 'being',
+  'below', 'between', 'both', 'but', 'by', 'can', 'can\'t', 'cannot', 'could',
+  'did', 'do', 'does', 'doing', 'down', 'during', 'each', 'few', 'for', 'from',
+  'further', 'had', 'has', 'have', 'having', 'he', 'her', 'here', 'hers',
+  'herself', 'him', 'himself', 'his', 'how', 'i', 'if', 'in', 'into', 'is',
+  'it', 'its', 'itself', 'let\'s', 'me', 'more', 'most', 'my', 'myself', 'no',
+  'nor', 'not', 'of', 'off', 'on', 'once', 'only', 'or', 'other', 'ought',
+  'our', 'ours', 'ourselves', 'out', 'over', 'own', 'same', 'she', 'should',
+  'so', 'some', 'such', 'than', 'that', 'the', 'their', 'theirs', 'them',
+  'themselves', 'then', 'there', 'these', 'they', 'this', 'those', 'through',
+  'to', 'too', 'under', 'until', 'up', 'very', 'was', 'we', 'were', 'what',
+  'when', 'where', 'which', 'while', 'who', 'whom', 'why', 'with', 'would',
+  'you', 'your', 'yours', 'yourself', 'yourselves'
+]);
+
 async function fallbackClientSearch(
   query: string,
   mode: SearchMode,
@@ -127,36 +148,52 @@ async function fallbackClientSearch(
   pageSize: number = 10,
   domain?: string
 ): Promise<SearchResponse> {
-  const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+  const cleanQ = query.trim();
+  const allTerms = cleanQ.toLowerCase().split(/\s+/).filter(Boolean);
+  const meaningfulTerms = allTerms.filter((t) => !STOP_WORDS.has(t) && t.length > 1);
+  const searchTerms = meaningfulTerms.length > 0 ? meaningfulTerms : allTerms;
+
+  // 1. Only match local corpus if user is actually querying terms present in it
   let matched = LOCAL_FALLBACK_CORPUS.filter((doc) => {
     if (domain && doc.domain !== domain) return false;
-    if (terms.length === 0) return true;
+    if (searchTerms.length === 0) return false;
     const fullText = `${doc.title} ${doc.snippet} ${doc.content || ''}`.toLowerCase();
-    return terms.some((t) => fullText.includes(t));
+    return searchTerms.some((t) => {
+      const escaped = t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return new RegExp(`\\b${escaped}\\b`, 'i').test(fullText);
+    });
   });
 
-  // If local index has no match, fetch live from Wikipedia Open Search API
-  if (matched.length === 0 && terms.length > 0) {
+  // 2. If local index has no match for the user's topic, query Wikipedia API live from browser
+  if (matched.length === 0 && cleanQ.length > 0) {
     try {
       const resp = await fetch(
-        `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*`
+        `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(cleanQ)}&format=json&origin=*`
       );
       if (resp.ok) {
         const data = await resp.json();
         const hits = data.query?.search || [];
-        const liveItems: SearchResultItem[] = hits.map((h: any, idx: number) => ({
-          id: `wiki-${h.pageid}`,
-          document_id: `wiki-${h.pageid}`,
-          title: `${h.title} - Wikipedia`,
-          url: `https://en.wikipedia.org/wiki/${encodeURIComponent(h.title.replace(/ /g, '_'))}`,
-          domain: 'en.wikipedia.org',
-          snippet: h.snippet ? h.snippet.replace(/<span class="searchmatch">/g, '<em>').replace(/<\/span>/g, '</em>') : '',
-          content: `${h.title}\n\n${(h.snippet || '').replace(/<[^>]+>/g, '')}\n\nSource: https://en.wikipedia.org/wiki/${encodeURIComponent(h.title.replace(/ /g, '_'))}`,
-          author: 'Wikipedia Encyclopedia',
-          hybrid_score: 0.95 - idx * 0.05,
-          bm25_score: 12 - idx,
-          rank: idx + 1,
-        }));
+        const liveItems: SearchResultItem[] = hits.map((h: any, idx: number) => {
+          const rawSnippet = h.snippet || '';
+          const highlightedSnippet = rawSnippet
+            .replace(/<span class="searchmatch">/g, '<em>')
+            .replace(/<\/span>/g, '</em>');
+          const cleanSnippet = rawSnippet.replace(/<[^>]+>/g, '').replace(/&quot;/g, '"');
+          return {
+            id: `wiki-${h.pageid}`,
+            document_id: `wiki-${h.pageid}`,
+            title: `${h.title} - Wikipedia`,
+            url: `https://en.wikipedia.org/wiki/${encodeURIComponent(h.title.replace(/ /g, '_'))}`,
+            domain: 'en.wikipedia.org',
+            snippet: highlightedSnippet || cleanSnippet,
+            content: `${h.title}\n\n${cleanSnippet}\n\nSource: https://en.wikipedia.org/wiki/${encodeURIComponent(h.title.replace(/ /g, '_'))}`,
+            author: 'Wikipedia Encyclopedia',
+            hybrid_score: Math.max(0.7, 0.98 - idx * 0.03),
+            bm25_score: Math.max(8, 15.0 - idx * 0.5),
+            vector_score: Math.max(0.65, 0.92 - idx * 0.02),
+            rank: idx + 1,
+          };
+        });
         if (liveItems.length > 0) {
           matched = liveItems;
         }
@@ -164,10 +201,6 @@ async function fallbackClientSearch(
     } catch {
       // ignore
     }
-  }
-
-  if (matched.length === 0) {
-    matched = LOCAL_FALLBACK_CORPUS.slice(0, 3);
   }
 
   const start = (page - 1) * pageSize;
@@ -182,7 +215,7 @@ async function fallbackClientSearch(
     page_size: pageSize,
     execution_time_ms: 18.4,
     results: paginated,
-    fallback_used: 'Live Web Multi-Source',
+    fallback_used: matched.length > 0 ? 'Live Web Multi-Source (Wikipedia)' : undefined,
   };
 }
 
