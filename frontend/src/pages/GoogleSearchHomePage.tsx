@@ -20,6 +20,7 @@ import {
 import { api } from '../services/api';
 import { historyService } from '../services/historyService';
 import { useVoiceTyping } from '../hooks/useVoiceTyping';
+import { VoiceSearchModal } from '../components/VoiceSearchModal';
 import { CrawlerModal } from '../components/CrawlerModal';
 import { AuthModal } from '../components/AuthModal';
 import { SearchHistoryModal } from '../components/SearchHistoryModal';
@@ -48,6 +49,7 @@ export const GoogleSearchHomePage: React.FC<GoogleSearchHomePageProps> = ({
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   // Modals
+  const [isVoiceOpen, setIsVoiceOpen] = useState(false);
   const [isCrawlerOpen, setIsCrawlerOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -193,9 +195,8 @@ export const GoogleSearchHomePage: React.FC<GoogleSearchHomePageProps> = ({
   };
 
   return (
-    <div className={`min-h-screen relative flex flex-col justify-between overflow-x-hidden ${
-      isDarkMode ? 'dark bg-[#07090e] text-slate-100' : 'bg-slate-50 text-slate-900'
-    } selection:bg-blue-500 selection:text-white transition-colors duration-200`}>
+    <div className={`min-h-screen relative flex flex-col justify-between overflow-x-hidden ${isDarkMode ? 'dark bg-[#07090e] text-slate-100' : 'bg-slate-50 text-slate-900'
+      } selection:bg-blue-500 selection:text-white transition-colors duration-200`}>
       {/* Background Architectural Grid & Ambient Glows */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Fine-grained dot matrix */}
@@ -346,13 +347,12 @@ export const GoogleSearchHomePage: React.FC<GoogleSearchHomePageProps> = ({
         {/* The Search Console Input Box */}
         <div className="w-full max-w-3xl mt-8 relative" ref={dropdownRef}>
           <div
-            className={`w-full bg-white dark:bg-slate-900/90 backdrop-blur-2xl border ${
-              voiceTyping.isListening
+            className={`w-full bg-white dark:bg-slate-900/90 backdrop-blur-2xl border ${voiceTyping.isListening
                 ? 'rounded-2xl border-red-500 shadow-2xl ring-4 ring-red-500/20'
                 : (showSuggestions && suggestions.length > 0) || (showHistory && !query.trim() && historyItems.length > 0)
-                ? 'rounded-t-2xl border-blue-500 shadow-2xl'
-                : 'rounded-2xl border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-lg dark:shadow-xl'
-            } focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 px-5 py-3.5 flex items-center gap-3 transition-all duration-200`}
+                  ? 'rounded-t-2xl border-blue-500 shadow-2xl'
+                  : 'rounded-2xl border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-lg dark:shadow-xl'
+              } focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 px-5 py-3.5 flex items-center gap-3 transition-all duration-200`}
           >
             {/* Search Icon or Live Audio Voice Typing Animation */}
             {voiceTyping.isListening ? (
@@ -445,13 +445,12 @@ export const GoogleSearchHomePage: React.FC<GoogleSearchHomePageProps> = ({
             <button
               type="button"
               onClick={() => voiceTyping.toggleVoiceTyping(query)}
-              className={`p-2 rounded-xl transition-all duration-200 flex items-center justify-center flex-shrink-0 ${
-                voiceTyping.isListening
+              className={`p-2 rounded-xl transition-all duration-200 flex items-center justify-center flex-shrink-0 ${voiceTyping.isListening
                   ? 'bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/40 ring-4 ring-red-500/20 scale-105'
                   : voiceTyping.isProcessing
-                  ? 'bg-blue-500 text-white shadow-md shadow-blue-500/30'
-                  : 'text-slate-400 hover:text-blue-500 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-              }`}
+                    ? 'bg-blue-500 text-white shadow-md shadow-blue-500/30'
+                    : 'text-slate-400 hover:text-blue-500 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
               title={voiceTyping.isListening ? 'Stop Voice Typing' : 'Start Voice Typing'}
             >
               {voiceTyping.isProcessing ? (
@@ -561,11 +560,10 @@ export const GoogleSearchHomePage: React.FC<GoogleSearchHomePageProps> = ({
                     key={idx}
                     onMouseDown={() => handleSearch(item)}
                     onMouseEnter={() => setActiveSuggestionIndex(idx)}
-                    className={`px-5 py-2.5 flex items-center justify-between cursor-pointer text-sm transition ${
-                      idx === activeSuggestionIndex
+                    className={`px-5 py-2.5 flex items-center justify-between cursor-pointer text-sm transition ${idx === activeSuggestionIndex
                         ? 'bg-blue-50 dark:bg-blue-600/15 text-blue-600 dark:text-blue-300'
                         : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center space-x-3 truncate">
                       <Search className="w-4 h-4 text-slate-400 flex-shrink-0" />
@@ -621,6 +619,16 @@ export const GoogleSearchHomePage: React.FC<GoogleSearchHomePageProps> = ({
           </div>
         </div>
       </footer>
+
+      {/* Voice Search Modal */}
+      <VoiceSearchModal
+        isOpen={isVoiceOpen}
+        onClose={() => setIsVoiceOpen(false)}
+        onTranscript={(spokenQuery) => {
+          setQuery(spokenQuery);
+          handleSearch(spokenQuery);
+        }}
+      />
 
       {/* Crawler / URL Ingestion Modal */}
       <CrawlerModal

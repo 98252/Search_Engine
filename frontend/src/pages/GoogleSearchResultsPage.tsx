@@ -30,6 +30,7 @@ import { useVoiceTyping } from '../hooks/useVoiceTyping';
 import { SearchResultItem, SearchMode, SearchResponse, SearchHistoryItem } from '../types';
 import { InstantReaderDrawer } from '../components/InstantReaderDrawer';
 import { TuningLens } from '../components/TuningLens';
+import { VoiceSearchModal } from '../components/VoiceSearchModal';
 import { CrawlerModal } from '../components/CrawlerModal';
 import { PeopleAlsoAsk } from '../components/PeopleAlsoAsk';
 import { SearchHistoryModal } from '../components/SearchHistoryModal';
@@ -74,6 +75,7 @@ export const GoogleSearchResultsPage: React.FC<GoogleSearchResultsPageProps> = (
   }, [queryParam]);
 
   // Modals
+  const [isVoiceOpen, setIsVoiceOpen] = useState(false);
   const [isCrawlerOpen, setIsCrawlerOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
@@ -340,11 +342,10 @@ export const GoogleSearchResultsPage: React.FC<GoogleSearchResultsPageProps> = (
           <div ref={searchBoxRef} className="flex-1 max-w-2xl relative">
             <form onSubmit={handleFormSubmit}>
               <div
-                className={`w-full bg-slate-100/90 dark:bg-slate-900 border ${
-                  voiceTyping.isListening
+                className={`w-full bg-slate-100/90 dark:bg-slate-900 border ${voiceTyping.isListening
                     ? 'border-red-500 shadow-md ring-2 ring-red-500/20'
                     : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20'
-                } rounded-full px-4 py-2 flex items-center gap-2 shadow-sm transition`}
+                  } rounded-full px-4 py-2 flex items-center gap-2 shadow-sm transition`}
               >
                 {/* Voice Typing Active Wave Indicator */}
                 {voiceTyping.isListening && (
@@ -413,13 +414,12 @@ export const GoogleSearchResultsPage: React.FC<GoogleSearchResultsPageProps> = (
                 <button
                   type="button"
                   onClick={() => voiceTyping.toggleVoiceTyping(inputQuery)}
-                  className={`p-1.5 rounded-full transition-all duration-200 flex items-center justify-center ${
-                    voiceTyping.isListening
+                  className={`p-1.5 rounded-full transition-all duration-200 flex items-center justify-center ${voiceTyping.isListening
                       ? 'bg-red-500 text-white shadow-md shadow-red-500/40 ring-2 ring-red-400 scale-105'
                       : voiceTyping.isProcessing
-                      ? 'bg-blue-500 text-white'
-                      : 'text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-slate-200 dark:hover:bg-slate-800'
-                  }`}
+                        ? 'bg-blue-500 text-white'
+                        : 'text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-slate-200 dark:hover:bg-slate-800'
+                    }`}
                   title={voiceTyping.isListening ? 'Stop Voice Typing' : 'Start Voice Typing'}
                 >
                   {voiceTyping.isProcessing ? (
@@ -571,11 +571,10 @@ export const GoogleSearchResultsPage: React.FC<GoogleSearchResultsPageProps> = (
                 setActiveTab('all');
                 executeSearch(queryParam, mode, 1, 'all', bm25Weight, vectorWeight);
               }}
-              className={`pb-2 pt-1 font-medium transition border-b-2 flex items-center space-x-1.5 ${
-                activeTab === 'all'
+              className={`pb-2 pt-1 font-medium transition border-b-2 flex items-center space-x-1.5 ${activeTab === 'all'
                   ? 'border-blue-600 dark:border-blue-500 text-blue-600 dark:text-blue-400 font-semibold'
                   : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-              }`}
+                }`}
             >
               <Search className="w-3.5 h-3.5" />
               <span>All</span>
@@ -586,11 +585,10 @@ export const GoogleSearchResultsPage: React.FC<GoogleSearchResultsPageProps> = (
                 setActiveTab('nagarpalika');
                 executeSearch(queryParam, mode, 1, 'nagarpalika', bm25Weight, vectorWeight);
               }}
-              className={`pb-2 pt-1 font-medium transition border-b-2 flex items-center space-x-1.5 ${
-                activeTab === 'nagarpalika'
+              className={`pb-2 pt-1 font-medium transition border-b-2 flex items-center space-x-1.5 ${activeTab === 'nagarpalika'
                   ? 'border-blue-600 dark:border-blue-500 text-blue-600 dark:text-blue-400 font-semibold'
                   : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-              }`}
+                }`}
             >
               <Globe className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
               <span>Municipal / Nagarpalika</span>
@@ -601,11 +599,10 @@ export const GoogleSearchResultsPage: React.FC<GoogleSearchResultsPageProps> = (
                 setActiveTab('tech');
                 executeSearch(queryParam, mode, 1, 'tech', bm25Weight, vectorWeight);
               }}
-              className={`pb-2 pt-1 font-medium transition border-b-2 flex items-center space-x-1.5 ${
-                activeTab === 'tech'
+              className={`pb-2 pt-1 font-medium transition border-b-2 flex items-center space-x-1.5 ${activeTab === 'tech'
                   ? 'border-blue-600 dark:border-blue-500 text-blue-600 dark:text-blue-400 font-semibold'
                   : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-              }`}
+                }`}
             >
               <Sparkles className="w-3.5 h-3.5 text-purple-500 dark:text-purple-400" />
               <span>Technical & AI</span>
@@ -615,11 +612,10 @@ export const GoogleSearchResultsPage: React.FC<GoogleSearchResultsPageProps> = (
           {/* Tools / Glass-Box Tuner Toggle */}
           <button
             onClick={() => setShowTools(!showTools)}
-            className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition ${
-              showTools
+            className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition ${showTools
                 ? 'bg-blue-50 dark:bg-blue-600/20 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-500/40'
                 : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900'
-            }`}
+              }`}
           >
             <SlidersHorizontal className="w-3.5 h-3.5" />
             <span>Tools & Tuner</span>
@@ -634,11 +630,10 @@ export const GoogleSearchResultsPage: React.FC<GoogleSearchResultsPageProps> = (
               <button
                 key={tf}
                 onClick={() => setTimeFilter(tf)}
-                className={`px-2 py-0.5 rounded-md border text-[11px] transition ${
-                  timeFilter === tf
+                className={`px-2 py-0.5 rounded-md border text-[11px] transition ${timeFilter === tf
                     ? 'bg-blue-50 dark:bg-blue-600/20 border-blue-300 dark:border-blue-500/40 text-blue-600 dark:text-blue-300 font-semibold'
                     : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 bg-white dark:bg-transparent'
-                }`}
+                  }`}
               >
                 {tf === 'all' ? 'Any time' : tf === '24h' ? 'Past 24 hours' : tf === 'week' ? 'Past week' : 'Past year'}
               </button>
@@ -1010,6 +1005,16 @@ export const GoogleSearchResultsPage: React.FC<GoogleSearchResultsPageProps> = (
         activeQuery={queryParam}
         currentIndex={currentIndex}
         totalResults={response?.results.length ?? 0}
+      />
+
+      {/* Voice Search Modal */}
+      <VoiceSearchModal
+        isOpen={isVoiceOpen}
+        onClose={() => setIsVoiceOpen(false)}
+        onTranscript={(spoken) => {
+          setInputQuery(spoken);
+          setSearchParams({ q: spoken });
+        }}
       />
 
       {/* Crawler & URL Ingestion Modal */}
