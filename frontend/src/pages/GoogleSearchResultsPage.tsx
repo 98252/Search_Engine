@@ -324,33 +324,33 @@ export const GoogleSearchResultsPage: React.FC<GoogleSearchResultsPageProps> = (
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 selection:bg-blue-500 selection:text-white transition-colors duration-200">
-      {/* Sticky Google-Style Header */}
-      <header className="sticky top-0 z-30 bg-white/95 dark:bg-slate-950/90 border-b border-slate-200 dark:border-slate-800/80 backdrop-blur-md transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-4">
-          {/* Brand Logo (Links to Home) */}
-          <Link to="/" className="flex items-center space-x-2.5 flex-shrink-0 group">
+      {/* Sticky Google-Style Header with Mobile/Tablet/Mac Optimization */}
+      <header className="sticky top-0 z-30 bg-white/95 dark:bg-slate-950/90 border-b border-slate-200 dark:border-slate-800/80 backdrop-blur-md transition-colors pt-safe">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-2 sm:gap-4">
+          {/* Brand Logo - Compact icon on mobile, full brand on tablet/desktop */}
+          <Link to="/" className="flex items-center space-x-2 flex-shrink-0 group" title="SmartSearch Home">
             <img
               src="/logo-icon.png"
               alt="Smart Search"
-              className="w-8 h-8 object-contain drop-shadow-[0_0_10px_rgba(56,189,248,0.45)] group-hover:scale-105 transition-transform"
+              className="w-7 h-7 sm:w-8 sm:h-8 object-contain drop-shadow-[0_0_10px_rgba(56,189,248,0.45)] group-hover:scale-105 transition-transform"
             />
-            <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white select-none">
+            <span className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white select-none hidden sm:inline">
               Smart<span className="text-blue-600 dark:text-blue-400">Search</span>
             </span>
           </Link>
 
           {/* Search Box Container */}
-          <div ref={searchBoxRef} className="flex-1 max-w-2xl relative">
+          <div ref={searchBoxRef} className="flex-1 max-w-2xl relative min-w-0">
             <form onSubmit={handleFormSubmit}>
               <div
                 className={`w-full bg-slate-100/90 dark:bg-slate-900 border ${voiceTyping.isListening
                     ? 'border-red-500 shadow-md ring-2 ring-red-500/20'
                     : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20'
-                  } rounded-full px-4 py-2 flex items-center gap-2 shadow-sm transition`}
+                  } rounded-full px-3 sm:px-4 py-1.5 sm:py-2 flex items-center gap-1.5 sm:gap-2 shadow-sm transition`}
               >
                 {/* Voice Typing Active Wave Indicator */}
                 {voiceTyping.isListening && (
-                  <div className="flex items-center space-x-0.5 text-red-500 pr-1" title="Voice Typing Active">
+                  <div className="flex items-center space-x-0.5 text-red-500 pr-1 flex-shrink-0" title="Voice Typing Active">
                     <span className="w-1 h-2.5 bg-red-500 rounded-full animate-pulse" />
                     <span
                       style={{ height: `${Math.max(6, (voiceTyping.voiceVolume / 100) * 18)}px` }}
@@ -381,17 +381,17 @@ export const GoogleSearchResultsPage: React.FC<GoogleSearchResultsPageProps> = (
                   }}
                   placeholder={
                     voiceTyping.isListening
-                      ? "🎙️ Listening... Speak now to type"
-                      : "Search across documents and web..."
+                      ? "🎙️ Listening... Speak now"
+                      : "Search records, docs, web..."
                   }
-                  className="flex-1 bg-transparent text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none"
+                  className="flex-1 bg-transparent text-base sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none min-w-0"
                 />
 
                 {/* Processing Spinner */}
                 {voiceTyping.isProcessing && (
-                  <div className="flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 font-medium">
+                  <div className="flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 font-medium flex-shrink-0">
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    <span className="hidden sm:inline">Typing...</span>
+                    <span className="hidden md:inline">Typing...</span>
                   </div>
                 )}
 
@@ -405,7 +405,7 @@ export const GoogleSearchResultsPage: React.FC<GoogleSearchResultsPageProps> = (
                         setShowHistory(true);
                       }
                     }}
-                    className="p-1 rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 transition"
+                    className="p-1 rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 transition flex-shrink-0"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
@@ -415,7 +415,7 @@ export const GoogleSearchResultsPage: React.FC<GoogleSearchResultsPageProps> = (
                 <button
                   type="button"
                   onClick={() => voiceTyping.toggleVoiceTyping(inputQuery)}
-                  className={`p-1.5 rounded-full transition-all duration-200 flex items-center justify-center ${voiceTyping.isListening
+                  className={`p-1.5 rounded-full transition-all duration-200 flex items-center justify-center flex-shrink-0 ${voiceTyping.isListening
                       ? 'bg-red-500 text-white shadow-md shadow-red-500/40 ring-2 ring-red-400 scale-105'
                       : voiceTyping.isProcessing
                         ? 'bg-blue-500 text-white'
@@ -434,7 +434,7 @@ export const GoogleSearchResultsPage: React.FC<GoogleSearchResultsPageProps> = (
 
                 <button
                   type="submit"
-                  className="p-1.5 rounded-full text-blue-600 dark:text-blue-400 hover:text-white hover:bg-blue-600 transition"
+                  className="p-1.5 rounded-full text-blue-600 dark:text-blue-400 hover:text-white hover:bg-blue-600 transition flex-shrink-0"
                 >
                   <Search className="w-4 h-4" />
                 </button>
@@ -564,15 +564,15 @@ export const GoogleSearchResultsPage: React.FC<GoogleSearchResultsPageProps> = (
           </div>
         </div>
 
-        {/* Google-Style Navigation Tabs */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between text-xs border-t border-slate-200 dark:border-slate-900 overflow-x-auto transition-colors">
-          <div className="flex items-center space-x-1 sm:space-x-6 py-2">
+        {/* Google-Style Navigation Tabs - Swipeable on Mobile/Tablet */}
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 flex items-center justify-between text-xs border-t border-slate-200 dark:border-slate-900 overflow-x-auto no-scrollbar whitespace-nowrap transition-colors">
+          <div className="flex items-center space-x-2 sm:space-x-6 py-2 flex-shrink-0">
             <button
               onClick={() => {
                 setActiveTab('all');
                 executeSearch(queryParam, mode, 1, 'all', bm25Weight, vectorWeight);
               }}
-              className={`pb-2 pt-1 font-medium transition border-b-2 flex items-center space-x-1.5 ${activeTab === 'all'
+              className={`pb-2 pt-1 font-medium transition border-b-2 flex items-center space-x-1.5 flex-shrink-0 ${activeTab === 'all'
                   ? 'border-blue-600 dark:border-blue-500 text-blue-600 dark:text-blue-400 font-semibold'
                   : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                 }`}
@@ -586,7 +586,7 @@ export const GoogleSearchResultsPage: React.FC<GoogleSearchResultsPageProps> = (
                 setActiveTab('nagarpalika');
                 executeSearch(queryParam, mode, 1, 'nagarpalika', bm25Weight, vectorWeight);
               }}
-              className={`pb-2 pt-1 font-medium transition border-b-2 flex items-center space-x-1.5 ${activeTab === 'nagarpalika'
+              className={`pb-2 pt-1 font-medium transition border-b-2 flex items-center space-x-1.5 flex-shrink-0 ${activeTab === 'nagarpalika'
                   ? 'border-blue-600 dark:border-blue-500 text-blue-600 dark:text-blue-400 font-semibold'
                   : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                 }`}
@@ -600,7 +600,7 @@ export const GoogleSearchResultsPage: React.FC<GoogleSearchResultsPageProps> = (
                 setActiveTab('tech');
                 executeSearch(queryParam, mode, 1, 'tech', bm25Weight, vectorWeight);
               }}
-              className={`pb-2 pt-1 font-medium transition border-b-2 flex items-center space-x-1.5 ${activeTab === 'tech'
+              className={`pb-2 pt-1 font-medium transition border-b-2 flex items-center space-x-1.5 flex-shrink-0 ${activeTab === 'tech'
                   ? 'border-blue-600 dark:border-blue-500 text-blue-600 dark:text-blue-400 font-semibold'
                   : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                 }`}
@@ -613,7 +613,7 @@ export const GoogleSearchResultsPage: React.FC<GoogleSearchResultsPageProps> = (
           {/* Tools / Glass-Box Tuner Toggle */}
           <button
             onClick={() => setShowTools(!showTools)}
-            className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition ${showTools
+            className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex-shrink-0 ml-2 ${showTools
                 ? 'bg-blue-50 dark:bg-blue-600/20 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-500/40'
                 : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900'
               }`}

@@ -215,6 +215,13 @@ export function useVoiceTyping({
       try {
         const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
         const audioCtx = new AudioCtx();
+        if (audioCtx.state === 'suspended') {
+          try {
+            await audioCtx.resume();
+          } catch {
+            // ignore
+          }
+        }
         audioContextRef.current = audioCtx;
 
         const sourceNode = audioCtx.createMediaStreamSource(stream);

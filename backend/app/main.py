@@ -322,10 +322,11 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS Configuration
+# CORS Configuration: Allow local network devices (Mobile, Tablet, Mac)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
+    allow_origins=settings.CORS_ORIGINS if settings.ENVIRONMENT == "production" else ["*"],
+    allow_origin_regex=r"https?://.*" if settings.ENVIRONMENT == "development" else None,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

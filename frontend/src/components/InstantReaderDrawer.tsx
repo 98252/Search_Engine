@@ -442,9 +442,9 @@ export const InstantReaderDrawer: React.FC<InstantReaderDrawerProps> = ({
           themeClasses[theme]
         } ${fontSerif ? 'font-serif' : 'font-sans'}`}
       >
-        {/* Top Control Bar */}
+        {/* Top Control Bar with iOS safe area support */}
         <div
-          className={`px-5 py-3 border-b flex items-center justify-between gap-3 backdrop-blur-md sticky top-0 z-20 ${
+          className={`px-3 sm:px-5 py-2.5 sm:py-3 border-b flex items-center justify-between gap-2 sm:gap-3 backdrop-blur-md sticky top-0 z-20 pt-safe ${
             headerBgClasses[theme]
           }`}
         >
@@ -774,7 +774,7 @@ export const InstantReaderDrawer: React.FC<InstantReaderDrawerProps> = ({
         {activeTab === 'reader' && (
           <div
             ref={contentRef}
-            className="flex-1 overflow-y-auto px-6 sm:px-10 py-6 space-y-6"
+            className="flex-1 overflow-y-auto px-4 sm:px-10 py-5 sm:py-6 space-y-5 sm:space-y-6 pb-safe"
             style={{ fontSize: `${fontSize}px` }}
           >
             {loading ? (
@@ -926,7 +926,7 @@ export const InstantReaderDrawer: React.FC<InstantReaderDrawerProps> = ({
 
         {/* TAB 2: KEY TAKEAWAYS & EXECUTIVE SUMMARY */}
         {activeTab === 'insights' && (
-          <div className="flex-1 overflow-y-auto px-6 sm:px-8 py-6 space-y-6">
+          <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-5 sm:py-6 space-y-5 sm:space-y-6 pb-safe">
             <div className="border-b border-current/10 pb-4">
               <span className="text-[11px] font-bold text-blue-400 uppercase tracking-wider block mb-1">
                 AI Synthesis & Key Findings

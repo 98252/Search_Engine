@@ -207,25 +207,26 @@ export const GoogleSearchHomePage: React.FC<GoogleSearchHomePageProps> = ({
       </div>
 
       {/* Top Navigation Bar */}
-      <header className="relative z-20 px-6 sm:px-12 py-4 flex items-center justify-between border-b border-slate-200/80 dark:border-white/[0.06] backdrop-blur-md bg-white/70 dark:bg-[#07090e]/70 transition-colors">
+      {/* Top Navigation Bar with Mobile/Tablet/Mac Adaptability */}
+      <header className="relative z-20 px-3.5 sm:px-6 md:px-12 py-3 sm:py-4 flex items-center justify-between border-b border-slate-200/80 dark:border-white/[0.06] backdrop-blur-md bg-white/80 dark:bg-[#07090e]/80 transition-colors">
         {/* Logo & Version Chip */}
-        <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/')}>
+        <div className="flex items-center space-x-2 sm:space-x-3 cursor-pointer flex-shrink-0" onClick={() => navigate('/')}>
           <img
             src="/logo-icon.png"
             alt="Smart Search Logo"
-            className="w-9 h-9 object-contain drop-shadow-[0_0_12px_rgba(56,189,248,0.45)] hover:scale-105 transition-transform"
+            className="w-8 h-8 sm:w-9 sm:h-9 object-contain drop-shadow-[0_0_12px_rgba(56,189,248,0.45)] hover:scale-105 transition-transform"
           />
-          <div className="flex items-baseline space-x-2">
-            <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+          <div className="flex items-baseline space-x-1.5 sm:space-x-2">
+            <span className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white">
               Smart<span className="text-blue-500 dark:text-blue-400">Search</span>
             </span>
-            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 font-medium">
-              v2.4 AI
+            <span className="text-[9px] sm:text-[10px] font-mono px-1 sm:px-1.5 py-0.5 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 font-medium">
+              v2.4
             </span>
           </div>
         </div>
 
-        {/* Center Live Engine Status Bar */}
+        {/* Center Live Engine Status Bar (Tablets & Desktop) */}
         <div className="hidden lg:flex items-center space-x-6 text-xs text-slate-500 dark:text-slate-400">
           <div className="flex items-center space-x-2 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
             <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse" />
@@ -241,7 +242,7 @@ export const GoogleSearchHomePage: React.FC<GoogleSearchHomePageProps> = ({
           </button>
 
           <a
-            href="http://localhost:8000/docs"
+            href="/docs"
             target="_blank"
             rel="noreferrer"
             className="flex items-center space-x-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition"
@@ -255,16 +256,16 @@ export const GoogleSearchHomePage: React.FC<GoogleSearchHomePageProps> = ({
           </Link>
         </div>
 
-        {/* Right Controls */}
-        <div className="flex items-center space-x-3">
+        {/* Right Controls - Mobile/Tablet/Mac Adaptive */}
+        <div className="flex items-center space-x-1.5 sm:space-x-2.5">
           {/* Search History Button */}
           <button
             onClick={() => setIsHistoryOpen(true)}
-            className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200/80 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center space-x-1.5"
+            className="p-2 sm:px-2.5 sm:py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200/80 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center space-x-1.5"
             title="Search History & Activity"
           >
             <History className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-            <span className="text-xs hidden sm:inline font-medium">History</span>
+            <span className="text-xs hidden md:inline font-medium">History</span>
           </button>
 
           {/* Theme Toggle Button */}
@@ -282,26 +283,27 @@ export const GoogleSearchHomePage: React.FC<GoogleSearchHomePageProps> = ({
 
           {/* User Account / Sign In */}
           {currentUser ? (
-            <div className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-200">
+            <div className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-200">
               <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400" />
-              <span className="font-medium truncate max-w-[130px]">{currentUser.email}</span>
+              <span className="font-medium truncate max-w-[80px] sm:max-w-[130px]">{currentUser.email}</span>
             </div>
           ) : (
             <button
               onClick={() => setIsAuthOpen(true)}
-              className="px-4 py-1.5 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 transition shadow-sm"
+              className="px-2.5 sm:px-4 py-1.5 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 transition shadow-sm"
             >
               Sign In
             </button>
           )}
 
-          {/* Get Started / Index URL */}
+          {/* Index URL button */}
           <button
             onClick={() => setIsCrawlerOpen(true)}
-            className="px-4 py-1.5 rounded-xl text-xs font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-md shadow-blue-600/20 transition flex items-center space-x-1.5"
+            className="p-2 sm:px-3.5 sm:py-1.5 rounded-xl text-xs font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-md shadow-blue-600/20 transition flex items-center space-x-1.5"
+            title="Index new web URL or document"
           >
-            <Scan className="w-3.5 h-3.5" />
-            <span>Index URL</span>
+            <Scan className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
+            <span className="hidden sm:inline">Index URL</span>
           </button>
         </div>
       </header>
@@ -526,7 +528,7 @@ export const GoogleSearchHomePage: React.FC<GoogleSearchHomePageProps> = ({
                       </span>
                       <button
                         onClick={(e) => handleDeleteHistoryItem(item.id, e)}
-                        className="p-1 rounded text-slate-400 hover:text-red-500 dark:hover:text-red-400 opacity-0 group-hover:opacity-100 hover:bg-slate-100 dark:hover:bg-slate-700 transition"
+                        className="p-1.5 rounded text-slate-400 hover:text-red-500 dark:hover:text-red-400 opacity-80 sm:opacity-0 group-hover:opacity-100 hover:bg-slate-100 dark:hover:bg-slate-700 transition"
                         title="Delete from history"
                       >
                         <X className="w-3.5 h-3.5" />
@@ -577,17 +579,37 @@ export const GoogleSearchHomePage: React.FC<GoogleSearchHomePageProps> = ({
           )}
         </div>
 
+        {/* Quick Topic Chips for Mobile, Tablet & Mac */}
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 max-w-2xl px-2">
+          <span className="text-[11px] text-slate-400 dark:text-slate-500 font-medium mr-1">Trending:</span>
+          {[
+            { label: '🏛️ Nagarpalika Citizen Services', q: 'Nagarpalika Citizen Services' },
+            { label: '💰 Property Tax Assessment', q: 'Property Tax Assessment' },
+            { label: '⚡ Hybrid Search (RRF)', q: 'Hybrid Search BM25' },
+            { label: '📜 Vital Records & Certificates', q: 'Birth and Death Registration' },
+            { label: '🌱 Clean City Sanitation', q: 'Solid Waste Management' },
+          ].map((chip, idx) => (
+            <button
+              key={idx}
+              onClick={() => handleSearch(chip.q)}
+              className="px-2.5 py-1 rounded-full bg-slate-100/90 dark:bg-slate-900/80 hover:bg-slate-200/90 dark:hover:bg-slate-800 border border-slate-200/90 dark:border-slate-800/80 text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 transition shadow-xs"
+            >
+              {chip.label}
+            </button>
+          ))}
+        </div>
+
         {/* Clean Action Buttons */}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <div className="mt-6 sm:mt-8 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
           <button
             onClick={() => handleSearch(query)}
-            className="px-6 py-2.5 rounded-xl bg-white hover:bg-slate-100 dark:bg-slate-900/90 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-sm font-medium text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white transition shadow-sm"
+            className="px-5 sm:px-6 py-2.5 rounded-xl bg-white hover:bg-slate-100 dark:bg-slate-900/90 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white transition shadow-sm"
           >
             Smart Search
           </button>
           <button
             onClick={() => handleSearch(query || 'Nagarpalika Citizen Services', true)}
-            className="px-6 py-2.5 rounded-xl bg-white hover:bg-slate-100 dark:bg-slate-900/90 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-sm font-medium text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white transition shadow-sm flex items-center space-x-1.5"
+            className="px-5 sm:px-6 py-2.5 rounded-xl bg-white hover:bg-slate-100 dark:bg-slate-900/90 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white transition shadow-sm flex items-center space-x-1.5"
           >
             <Sparkles className="w-4 h-4 text-amber-500 dark:text-amber-400" />
             <span>I'm Feeling Lucky</span>
@@ -595,26 +617,26 @@ export const GoogleSearchHomePage: React.FC<GoogleSearchHomePageProps> = ({
         </div>
       </main>
 
-      {/* Enterprise Footer */}
-      <footer className="relative z-20 border-t border-slate-200 dark:border-white/[0.06] bg-slate-100/90 dark:bg-[#05070c] text-xs text-slate-500 dark:text-slate-400 transition-colors">
-        <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center space-x-3">
-            <img src="/logo-icon.png" alt="Smart Search" className="w-7 h-7 object-contain drop-shadow-[0_0_8px_rgba(56,189,248,0.35)]" />
+      {/* Enterprise Footer with Safe Area Support */}
+      <footer className="relative z-20 border-t border-slate-200 dark:border-white/[0.06] bg-slate-100/90 dark:bg-[#05070c] text-xs text-slate-500 dark:text-slate-400 transition-colors pb-safe">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center space-x-2.5 sm:space-x-3 text-center sm:text-left">
+            <img src="/logo-icon.png" alt="Smart Search" className="w-6 h-6 sm:w-7 sm:h-7 object-contain drop-shadow-[0_0_8px_rgba(56,189,248,0.35)]" />
             <div className="flex items-baseline space-x-2">
               <span className="font-semibold text-slate-900 dark:text-white">SmartSearch</span>
               <span className="text-slate-400 dark:text-slate-600">|</span>
-              <span className="text-slate-500 dark:text-slate-400">Search Smarter, Discover More</span>
+              <span className="text-slate-500 dark:text-slate-400 text-[11px] sm:text-xs">Search Smarter, Discover More</span>
             </div>
           </div>
 
-          <div className="flex items-center space-x-6 text-xs text-slate-500 dark:text-slate-400">
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-xs text-slate-500 dark:text-slate-400">
             <Link to="/about" className="hover:text-slate-900 dark:hover:text-white transition">Architecture</Link>
-            <a href="http://localhost:8000/docs" target="_blank" rel="noreferrer" className="hover:text-slate-900 dark:hover:text-white transition">REST APIs</a>
+            <a href="/docs" target="_blank" rel="noreferrer" className="hover:text-slate-900 dark:hover:text-white transition">REST APIs</a>
             <button onClick={() => setIsCrawlerOpen(true)} className="hover:text-slate-900 dark:hover:text-white transition">Crawler Ingestion</button>
             <Link to="/diagnostics" className="hover:text-slate-900 dark:hover:text-white transition">Diagnostics</Link>
           </div>
 
-          <div className="text-slate-400 dark:text-slate-500 text-[11px] font-mono">
+          <div className="text-slate-400 dark:text-slate-500 text-[10px] sm:text-[11px] font-mono text-center">
             SQLite • Qdrant • OpenSearch BM25 • Scrapy
           </div>
         </div>

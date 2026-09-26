@@ -82,17 +82,17 @@ export const CrawlerModal: React.FC<CrawlerModalProps> = ({ isOpen, onClose, onS
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in duration-150">
-      <div className="w-full max-w-xl bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl relative space-y-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-3 sm:p-4 animate-in fade-in duration-150">
+      <div className="w-full max-w-xl bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl relative space-y-4 sm:space-y-6 max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 text-slate-400 hover:text-white rounded-full hover:bg-slate-800 transition"
+          className="absolute top-4 sm:top-5 right-4 sm:right-5 p-2 text-slate-400 hover:text-white rounded-full hover:bg-slate-800 transition"
         >
           <X className="w-5 h-5" />
         </button>
 
         <div>
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
+          <h2 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
             <Globe className="w-5 h-5 text-blue-400" />
             <span>Search Corpus & Web Ingestion</span>
           </h2>
@@ -161,7 +161,7 @@ export const CrawlerModal: React.FC<CrawlerModalProps> = ({ isOpen, onClose, onS
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-1">
                   Source Web URL
@@ -239,7 +239,7 @@ export const CrawlerModal: React.FC<CrawlerModalProps> = ({ isOpen, onClose, onS
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-1">
                   Crawl Depth Limit: {depthLimit}
